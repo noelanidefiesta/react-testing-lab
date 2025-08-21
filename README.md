@@ -93,3 +93,28 @@ Before we begin coding, let's complete the initial setup for this lesson:
 - The application tests if a new transaction can be added.
 - The application tests if search functionality updates the page correctly.
 
+React Testing Lab · Bank Transactions
+
+This is a simple banking app I built for Flatiron’s Module 7 testing lab. It pulls in transactions, lets me add a new one, and gives me quick search and sort tools. The tests use Vitest with React Testing Library and mock the network calls, so I can move fast without a real backend running during tests.
+
+No emojis. No comments in code.
+
+What it does
+
+Shows transactions on page load from GET /transactions
+
+Lets me add a transaction with a small form that sends POST /transactions
+
+Filters by search (matches description or category)
+
+Sorts by amount and by date in both directions
+
+Comes with a test suite that checks display, add flow, search, and sort
+
+Tech
+
+React with Vite
+
+Vitest and React Testing Library
+
+JSON Server for a local API

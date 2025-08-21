@@ -1,14 +1,10 @@
-import React from "react";
-
-function Transaction({transaction}) {
+export default function Transaction({ tx }) {
   return (
-    <tr>
-      <td>{transaction.date}</td>
-      <td>{transaction.description}</td>
-      <td>{transaction.category}</td>
-      <td>{transaction.amount}</td>
+    <tr data-testid="transaction-row">
+      <td>{tx.date}</td>
+      <td>{tx.description}</td>
+      <td>{tx.category}</td>
+      <td align="right">{tx.amount}</td>
     </tr>
   );
 }
-
-export default Transaction;

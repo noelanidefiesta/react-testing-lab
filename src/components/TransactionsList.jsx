@@ -1,34 +1,21 @@
-import React from "react";
-import Transaction from "./Transaction";
+import Transaction from "./Transaction.jsx";
 
-function TransactionsList({transactions}) {
-  const transactionComponent = transactions.map((transaction)=>{
-    return <Transaction key={transaction.id} transaction={transaction}/>
-  })
+export default function TransactionsList({ rows }) {
   return (
-    <table className="ui celled striped padded table">
-      <tbody>
+    <table width="100%" cellPadding="6" style={{ borderCollapse: "collapse" }}>
+      <thead>
         <tr>
-          <th>
-            <h3 className="ui center aligned header">Date</h3>
-          </th>
-          <th>
-            <h3 className="ui center aligned header">Description</h3>
-          </th>
-          <th>
-            <h3 className="ui center aligned header">Category</h3>
-          </th>
-          <th>
-            <h3 className="ui center aligned header">Amount</h3>
-          </th>
-          <th>
-            <h3 className="ui center aligned header">DELETE</h3>
-          </th>
+          <th align="left">Date</th>
+          <th align="left">Description</th>
+          <th align="left">Category</th>
+          <th align="right">Amount</th>
         </tr>
-        {transactionComponent}
+      </thead>
+      <tbody>
+        {rows.map(tx => (
+          <Transaction key={tx.id} tx={tx} />
+        ))}
       </tbody>
     </table>
   );
 }
-
-export default TransactionsList;

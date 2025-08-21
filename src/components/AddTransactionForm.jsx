@@ -1,33 +1,39 @@
-import React from "react";
+import { useState } from "react";
 
-function AddTransactionForm({postTransaction}) {
-  function submitForm(e){
-    e.preventDefault()
-    const newTransaction = {
-      date: e.target.date.value,
-      description: e.target.description.value,
-      category: e.target.category.value,
-      amount: e.target.amount.value
-    }
-    postTransaction(newTransaction)
+export default function AddTransactionForm({ onCreated, apiUrl }) {
+  const [date, setDate] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
+  const [amount, setAmount] = useState("");
 
+  function reset() {
+    setDate("");
+    setDescription("");
+    setCategory("");
+    setAmount("");
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const body = { date, description, category, amount: Number(amount) };
+    const res = await fetch(apiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    const saved = await res.json();
+    onCreated(saved);
+    reset();
   }
 
   return (
-    <div className="ui segment">
-      <form className="ui form" onSubmit={(e)=>{submitForm(e)}}>
-        <div className="inline fields">
-          <input type="date" name="date" />
-          <input type="text" name="description" placeholder="Description" />
-          <input type="text" name="category" placeholder="Category" />
-          <input type="number" name="amount" placeholder="Amount" step="0.01" />
-        </div>
-        <button className="ui button" type="submit">
-          Add Transaction
-        </button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit} style={{ marginTop: 16, display: "grid", gap: 8, maxWidth: 520 }}>
+      <h2>Add Transaction</h2>
+      <input data-testid="date" placeholder="YYYY-MM-DD" value={date} onChange={e => setDate(e.target.value)} />
+      <input data-testid="description" placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} />
+      <input data-testid="category" placeholder="Category" value={category} onChange={e => setCategory(e.target.value)} />
+      <input data-testid="amount" placeholder="Amount" value={amount} onChange={e => setAmount(e.target.value)} />
+      <button data-testid="submit" type="submit" disabled={!date || !description || !category || !amount}>Submit</button>
+    </form>
   );
 }
-
-export default AddTransactionForm;

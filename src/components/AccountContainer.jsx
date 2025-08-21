@@ -1,48 +1,49 @@
-import React, {useState, useEffect} from "react";
-import TransactionsList from "./TransactionsList";
-import Search from "./Search";
-import AddTransactionForm from "./AddTransactionForm";
-import Sort from "./Sort";
+import { useEffect, useMemo, useState } from "react";
+import Search from "./Search.jsx";
+import Sort from "./Sort.jsx";
+import TransactionsList from "./TransactionsList.jsx";
+import AddTransactionForm from "./AddTransactionForm.jsx";
 
-function AccountContainer() {
-  const [transactions,setTransactions] = useState([])
-  const [search,setSearch] = useState("")
-  // console.log(search)
+const API_URL = "http://localhost:3001/transactions";
 
-  useEffect(()=>{
-    fetch("http://localhost:6001/transactions")
-    .then(r=>r.json())
-    .then(data=>setTransactions(data))
-  },[])
+export default function AccountContainer() {
+  const [transactions, setTransactions] = useState([]);
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState("none");
 
-  function postTransaction(newTransaction){
-    fetch('http://localhost:6001/transactions',{
-      method: "POST",
-      headers:{
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(newTransaction)
-    })
-    .then(r=>r.json())
-    .then(data=>setTransactions([...transactions,data]))
+  useEffect(() => {
+    fetch(API_URL)
+      .then(r => r.json())
+      .then(setTransactions)
+      .catch(() => setTransactions([]));
+  }, []);
+
+  const filtered = useMemo(() => {
+    const q = query.toLowerCase();
+    const base = q
+      ? transactions.filter(t =>
+        String(t.description || "").toLowerCase().includes(q) ||
+        String(t.category || "").toLowerCase().includes(q)
+      )
+      : transactions.slice();
+
+    if (sort === "amount-asc") return base.slice().sort((a, b) => Number(a.amount) - Number(b.amount));
+    if (sort === "amount-desc") return base.slice().sort((a, b) => Number(b.amount) - Number(a.amount));
+    if (sort === "date-asc") return base.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+    if (sort === "date-desc") return base.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+    return base;
+  }, [transactions, query, sort]);
+
+  function handleAdd(newTx) {
+    setTransactions(prev => [...prev, newTx]);
   }
-  
-  // Sort function here
-  function onSort(sortBy){
-    
-  }
-
-  // Filter using search here and pass new variable down
-  
 
   return (
-    <div>
-      <Search setSearch={setSearch}/>
-      <AddTransactionForm postTransaction={postTransaction}/>
-      <Sort onSort={onSort}/>
-      <TransactionsList transactions={transactions} />
-    </div>
+    <section>
+      <Search value={query} onChange={setQuery} />
+      <Sort value={sort} onChange={setSort} />
+      <TransactionsList rows={filtered} />
+      <AddTransactionForm onCreated={handleAdd} apiUrl={API_URL} />
+    </section>
   );
 }
-
-export default AccountContainer;

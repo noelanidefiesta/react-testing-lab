@@ -1,15 +1,10 @@
-import React from "react";
-import AccountContainer from "./AccountContainer";
+import AccountContainer from "./AccountContainer.jsx";
 
-function App() {
+export default function App() {
   return (
-    <div className="ui raised segment">
-      <div className="ui segment violet inverted">
-        <h2>The Royal Bank of Flatiron</h2>
-      </div>
+    <main style={{ padding: 16 }}>
+      <h1>Bank Transactions</h1>
       <AccountContainer />
-    </div>
+    </main>
   );
 }
-
-export default App;
