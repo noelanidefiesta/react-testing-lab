@@ -4,18 +4,22 @@ import Sort from "./Sort.jsx";
 import TransactionsList from "./TransactionsList.jsx";
 import AddTransactionForm from "./AddTransactionForm.jsx";
 
-const API_URL = "http://localhost:3001/transactions";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/transactions";
 
 export default function AccountContainer() {
   const [transactions, setTransactions] = useState([]);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("none");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetch(API_URL)
-      .then(r => r.json())
+      .then(r => (r.ok ? r.json() : Promise.reject(r)))
       .then(setTransactions)
-      .catch(() => setTransactions([]));
+      .catch(() => {
+        setTransactions([]);
+        setError("Unable to load transactions. Start the JSON server.");
+      });
   }, []);
 
   const filtered = useMemo(() => {
@@ -40,6 +44,7 @@ export default function AccountContainer() {
 
   return (
     <section>
+      {error ? <p style={{ color: "crimson" }}>{error}</p> : null}
       <Search value={query} onChange={setQuery} />
       <Sort value={sort} onChange={setSort} />
       <TransactionsList rows={filtered} />

@@ -16,11 +16,24 @@ export default function AddTransactionForm({ onCreated, apiUrl }) {
   async function handleSubmit(e) {
     e.preventDefault();
     const body = { date, description, category, amount: Number(amount) };
-    const res = await fetch(apiUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
-    });
+
+    let res;
+    try {
+      res = await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+    } catch {
+      alert("Network error. Start the JSON server.");
+      return;
+    }
+
+    if (!res.ok) {
+      alert("Server error. Check the API URL.");
+      return;
+    }
+
     const saved = await res.json();
     onCreated(saved);
     reset();
